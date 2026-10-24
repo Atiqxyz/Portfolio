@@ -163,9 +163,17 @@ const Model = {
         throw new Error("Unexpected GitHub API response");
       }
 
-      const filteredRepos = repos.sort((a, b) =>
-        new Date(b.updated_at).getTime() -
-        new Date(a.updated_at).getTime()
+      const featuredNames = new Set(this.featuredRepoNames);
+
+      const filteredRepos = repos
+        .filter(repo =>
+          !repo.fork &&
+          !repo.archived &&
+          !featuredNames.has(repo.name)
+        )
+        .sort((a, b) =>
+          new Date(b.updated_at).getTime() -
+          new Date(a.updated_at).getTime()
         );
 
       this.state.reposLoaded = true;
